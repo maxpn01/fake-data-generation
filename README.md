@@ -1,0 +1,1 @@
+A web application that implements synthetic user data generation with error emulation as a task for a training program.
