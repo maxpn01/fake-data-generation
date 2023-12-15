@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from "@reduxjs/toolkit";
 import regionReducer from "./slices/regionSlice";
 import seedReducer from "./slices/seedSlice";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline"
-import { useSelector, useDispatch } from 'react-redux'
-import { setSeed } from '../../slices/seedSlice';
+import { useSelector, useDispatch } from "react-redux"
+import { setSeed } from "../../slices/seedSlice";
 
 const Seed = () => {
     const seed = useSelector(state => state.seed.value);

@@ -2,8 +2,8 @@ import React from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react"
 import { ChevronDownIcon } from "@heroicons/react/20/solid"
-import { useSelector, useDispatch } from 'react-redux'
-import { updateRegion } from '../../slices/regionSlice';
+import { useSelector, useDispatch } from "react-redux"
+import { updateRegion } from "../../slices/regionSlice";
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 

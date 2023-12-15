@@ -1,8 +1,8 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import { faker, fakerEN_US, fakerPL, fakerKA_GE } from '@faker-js/faker';
-import { generateFakeUsers } from "../utils/generateFakeUsers";
+import { faker, fakerEN_US, fakerPL, fakerKA_GE } from "@faker-js/faker";
+import { generateFakeUsers } from "../utils/fakeUserGenerator";
 import { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
 const getLocale = (region) => {
     return region === "USA" ? fakerEN_US :
