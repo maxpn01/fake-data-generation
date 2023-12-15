@@ -2,11 +2,14 @@ import React from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react"
 import { ChevronDownIcon } from "@heroicons/react/20/solid"
+import { useSelector, useDispatch } from 'react-redux'
+import { updateRegion } from '../../slices/regionSlice';
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
 const Region = () => {
-    const [region, setRegion] = React.useState("Poland")
+    const region = useSelector(state => state.region.value);
+    const dispatch = useDispatch();
 
     return (
         <div className="flex items-center">
@@ -39,21 +42,7 @@ const Region = () => {
                                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                                     "block px-4 py-2 text-sm"
                                 )}
-                                onClick={() => setRegion("Poland")}
-                                >
-                                Poland
-                                </a>
-                            )}
-                            </Menu.Item>
-                            <Menu.Item>
-                            {({ active }) => (
-                                <a
-                                href="#"
-                                className={classNames(
-                                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                                    "block px-4 py-2 text-sm"
-                                )}
-                                onClick={() => setRegion("USA")}
+                                onClick={() => dispatch(updateRegion("USA"))}
                                 >
                                 USA
                                 </a>
@@ -67,7 +56,21 @@ const Region = () => {
                                     active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                                     "block px-4 py-2 text-sm"
                                 )}
-                                onClick={() => setRegion("Georgia")}
+                                onClick={() => dispatch(updateRegion("Poland"))}
+                                >
+                                Poland
+                                </a>
+                            )}
+                            </Menu.Item>
+                            <Menu.Item>
+                            {({ active }) => (
+                                <a
+                                href="#"
+                                className={classNames(
+                                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                                    "block px-4 py-2 text-sm"
+                                )}
+                                onClick={() => dispatch(updateRegion("Georgia"))}
                                 >
                                 Georgia
                                 </a>

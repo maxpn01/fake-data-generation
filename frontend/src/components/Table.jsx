@@ -1,17 +1,46 @@
-import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { faker, fakerEN_US, fakerPL, fakerKA_GE } from '@faker-js/faker';
+import { generateFakeUsers } from "../utils/generateFakeUsers";
+import { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
+
+const getLocale = (region) => {
+    return region === "USA" ? fakerEN_US :
+           region === "Poland" ? fakerPL :
+           region === "Georgia" ? fakerKA_GE : faker;
+}
 
 const Table = () => {
-    const [dataSource, setDataSource] = React.useState(Array.from({length: 20}));
-    // const [currentPage, setCurrentPage] = React.useState(1);
-    const [hasMore, setHasMore] = React.useState(true);
+    const [userData, setUserData] = useState([]);
+    const [displayedUsers, setDisplayedUsers] = useState([]);
+    // const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
+    const generatedUsersSize = 100;
+    const initialDisplayedUsersSize = 20;
     const fetchSize = 10;
 
+    const region = useSelector(state => state.region.value);
+    const seed = useSelector(state => state.seed.value);
+
+    useEffect(() => {
+        const fetchData = () => {
+            // const combinedSeed = seed + currentPage;
+            const newUserData = generateFakeUsers(getLocale(region), Number(seed), generatedUsersSize);
+            setUserData(newUserData);
+            setDisplayedUsers(newUserData.slice(0, initialDisplayedUsersSize));
+        };
+
+        fetchData();
+    }, [region, seed, setUserData, setDisplayedUsers])
+
     const fetchMoreData = () => {
-        if (dataSource.length <= 90) {
-            // setCurrentPage(Math.round(dataSource.length / 10));
+        if (displayedUsers.length <= generatedUsersSize) {
+            // setCurrentPage(Math.round(displayedUsers.length / 10));
             setTimeout(() => {
-                setDataSource(dataSource.concat(Array.from({length: fetchSize})));
+                setDisplayedUsers(prevUsers =>
+                    prevUsers.concat(userData.slice(prevUsers.length, prevUsers.length + fetchSize))
+                );
             }, 700);
         } else setHasMore(false);
     }
@@ -19,10 +48,10 @@ const Table = () => {
     return (
         <div className="overflow-auto mx-16 my-10">
             <InfiniteScroll 
-                dataLength={dataSource.length}
+                dataLength={displayedUsers.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
-                height={530}
+                height={540}
             >
                 <table className="w-full text-sm">
                     <thead className="text-xs uppercase text-zinc-100 bg-zinc-600">
@@ -35,14 +64,14 @@ const Table = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {dataSource.map((item, i) => {
+                        {displayedUsers.map((item, i) => {
                             return (
-                                <tr>
+                                <tr key={i}>
                                     <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{i++}</td>
-                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">050a00c0-1a9f-4440-b9f</td>
-                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">John Smith</td>
-                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">CA, Maine, P. Alto-Main, PO Box 68238</td>
-                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">+1 589-789-8112</td>
+                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{item.id}</td>
+                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{item.name}</td>
+                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{item.address}</td>
+                                    <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{item.phone}</td>
                                 </tr>
                             )
                         })}
