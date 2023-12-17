@@ -31,13 +31,17 @@ const swapCharError = (s) => {
     return newStr.join("");
 };
 
-export default function introduceError(s) {
-    const errorType = getRandomNumber(3);
+export default function introduceError(s, errorProbability) {
+    if (Math.random() < errorProbability && s.length < 25) {
+            const errorType = getRandomNumber(5);
 
-    switch (errorType) {
-        case 0: return deleteCharError(s);
-        case 1: return addCharError(s);
-        case 2: return swapCharError(s);
-        default: return s;
-    }
+            switch (errorType) {
+                case 0: return deleteCharError(s);
+                case 1: return addCharError(s);
+                case 2: return addCharError(s);
+                case 3: return swapCharError(s);
+                case 4: return swapCharError(s);
+                default: return s;
+            }
+    } else return s;
 };

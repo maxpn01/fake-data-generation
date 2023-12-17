@@ -1,7 +1,7 @@
 import introduceError from "./errorEmulation.js";
 import { faker } from "@faker-js/faker";
 
-const generateFakeUser = (locale, seed, errorN) => {
+const generateFakeUser = (locale, errorN) => {
     const loc = locale.location,
           uuid = locale.string.uuid(),
           firstName = locale.person.firstName(),
@@ -23,12 +23,8 @@ const generateFakeUser = (locale, seed, errorN) => {
 
         for (let i = 0; i < noisyData.length; i++) {
             for (let j = 0; j < errorN; j++) {
-                noisyData[i] = introduceError(noisyData[i]);
+                noisyData[i] = introduceError(noisyData[i], errorN);
             }
-        }
-
-        if (errorN < 1) {
-
         }
 
         return {
@@ -53,15 +49,15 @@ export const generateFakeUsers = (locale, seed, length, errorN) => {
     locale.seed(seed);
 
     Array.from({length: length}).forEach(() => {
-        users.push(generateFakeUser(locale, seed, errorN))
+        users.push(generateFakeUser(locale, errorN))
     })
 
     return users;
 }
 
-const errorN = 0.25;
+const errorN = 25;
 
 console.log("Error: 0");
-console.log(generateFakeUsers(faker, 2, 1, 0));
+console.log(generateFakeUsers(faker, 3, 1, 0));
 console.log(`Error: ${errorN}`);
-console.log(generateFakeUsers(faker, 2, 1, errorN));
+console.log(generateFakeUsers(faker, 3, 1, errorN));
