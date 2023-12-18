@@ -2,7 +2,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { faker, fakerEN_US, fakerPL, fakerKA_GE } from "@faker-js/faker";
 import { generateFakeUsers } from "../utils/fakeUserGenerator";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUsers } from "../slices/usersSlice";
 
 const getLocale = (region) => {
     return region === "USA" ? fakerEN_US :
@@ -23,15 +24,19 @@ const Table = () => {
 
     const tableHeight = 540;
 
+    const dispatch = useDispatch();
+
     const region = useSelector(state => state.region.value);
     const errorAmount = useSelector(state => state.errorAmount.value);
     const seed = useSelector(state => state.seed.value);
+    const users = useSelector(state => state.users.value);
 
     useEffect(() => {
         const fetchData = () => {
             const newUserData = generateFakeUsers(getLocale(region), Number(seed), generatedDataSize, Number(errorAmount));
             setUserData(newUserData);
             setDisplayedUsers(newUserData.slice(0, displayedDataSize));
+            dispatch(updateUsers(newUserData));
         };
 
         fetchData();
