@@ -14,7 +14,6 @@ export const regionSlice = createSlice({
     },
 })
 
-// Action creators are generated for each case reducer function
 export const { updateRegion } = regionSlice.actions;
 
 export default regionSlice.reducer;

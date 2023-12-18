@@ -88,10 +88,3 @@ export const generateFakeUsers = (locale, seed, length, errorN) => {
 
     return formattedUsers;
 }
-
-// console.log("Users with different seeds");
-// console.log(generateFakeUsers(fakerEN_US, 0, 2, 0));
-// console.log(generateFakeUsers(fakerEN_US, 1, 2, 0));
-// console.log("User with different errorN");
-// console.log(generateFakeUsers(fakerEN_US, 0, 2, 0));
-// console.log(generateFakeUsers(fakerEN_US, 0, 2, 0.5));

@@ -14,7 +14,6 @@ export const seedSlice = createSlice({
     },
 })
 
-// Action creators are generated for each case reducer function
 export const { setSeed } = seedSlice.actions;
 
 export default seedSlice.reducer;

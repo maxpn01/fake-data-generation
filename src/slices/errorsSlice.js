@@ -14,7 +14,6 @@ export const errorAmountSlice = createSlice({
     },
 })
 
-// Action creators are generated for each case reducer function
 export const { updateErrorAmount } = errorAmountSlice.actions;
 
 export default errorAmountSlice.reducer;

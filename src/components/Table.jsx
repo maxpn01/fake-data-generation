@@ -20,7 +20,7 @@ const Table = () => {
     const displayedDataSize = 20;
 
     const fetchSize = 10;
-    const fetchMoreDataDelay = 700;
+    const fetchMoreDataDelay = 500;
 
     const tableHeight = 540;
 
@@ -29,7 +29,6 @@ const Table = () => {
     const region = useSelector(state => state.region.value);
     const errorAmount = useSelector(state => state.errorAmount.value);
     const seed = useSelector(state => state.seed.value);
-    const users = useSelector(state => state.users.value);
 
     useEffect(() => {
         const fetchData = () => {
@@ -43,7 +42,6 @@ const Table = () => {
     }, [region, seed, errorAmount, setUserData, setDisplayedUsers])
 
     const fetchMoreData = () => {
-
         if (displayedUsers.length <= generatedDataSize) {
             setTimeout(() => {
                 setDisplayedUsers(prevUsers =>

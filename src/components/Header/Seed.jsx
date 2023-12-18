@@ -1,4 +1,3 @@
-import React from "react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline"
 import { useSelector, useDispatch } from "react-redux"
 import { setSeed } from "../../slices/seedSlice";
