@@ -19,33 +19,18 @@ function getAddressChars(locale) {
 }
 
 const generateFakeUser = (locale, errorN) => {
-    const location = locale.location;
-    const user = {
+    return {
         uuid: locale.string.uuid(),
         firstName: locale.person.firstName(),
         middleName: locale.person.middleName(),
         lastName: locale.person.lastName(),
-        state: location.state({ abbreviated: true }),
-        city: location.city(),
-        street: location.street(),
-        building: location.buildingNumber(),
-        apartment: location.secondaryAddress(),
-        zipCode: location.zipCode(),
+        state: locale.location.state({ abbreviated: true }),
+        city: locale.location.city(),
+        street: locale.location.street(),
+        building: locale.location.buildingNumber(),
+        apartment: locale.location.secondaryAddress(),
+        zipCode: locale.location.zipCode(),
         phone: locale.phone.number(),
-    };
-
-    return {
-        id: user.uuid,
-        firstName: user.firstName,
-        middleName: user.middleName,
-        lastName: user.lastName,
-        state: user.state,
-        city: user.city,
-        street: user.street,
-        building: user.building,
-        apartment: user.apartment,
-        zipCode: user.zipCode,
-        phone: user.phone,
     };
 }
 
@@ -79,7 +64,7 @@ export const generateFakeUsers = (locale, seed, length, errorN) => {
 
     users.forEach((user, index) => {
         formattedUsers.push({
-            id: user.id,
+            id: user.uuid,
             name: `${user.firstName} ${locale === fakerEN_US ? user.middleName + " " : ""}${user.lastName}`,
             address: `${user.state}, ${user.city}, ${user.street}, ${user.building}, ${user.apartment}, ${user.zipCode}`,
             phone: user.phone,
