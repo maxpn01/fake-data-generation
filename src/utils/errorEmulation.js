@@ -80,7 +80,5 @@ export default function introduceError(s, errorN, charSet, locale) {
         else return s;
     }
 
-    s = executeErrorFunc(s, charSet, locale);
-
-    return s;
+    return executeErrorFunc(s, charSet, locale);
 };
