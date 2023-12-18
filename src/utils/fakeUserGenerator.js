@@ -1,63 +1,97 @@
 import introduceError from "./errorEmulation.js";
-import { faker } from "@faker-js/faker";
+import { fakerEN_US, fakerPL, fakerKA_GE } from "@faker-js/faker";
+
+const englishAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const polishAlphabet = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹaąbcćdeęfghijklłmnńoópqrsśtuvwxyzź";
+const georgianAlphabet = "აბგდევზჱთიკლმნჲოპჟრსტჳუფქღყშჩცძწჭხჴჯჰჵჶჷჸ";
+const digits = "0123456789";
+
+function getNameChars(locale) {
+    return locale === fakerEN_US ? englishAlphabet :
+           locale === fakerPL ? polishAlphabet :
+           locale === fakerKA_GE ? georgianAlphabet : "";
+}
+
+function getAddressChars(locale) {
+    return locale === fakerEN_US ? englishAlphabet + digits :
+           locale === fakerPL ? polishAlphabet + digits :
+           locale === fakerKA_GE ? georgianAlphabet + digits : "";
+}
 
 const generateFakeUser = (locale, errorN) => {
-    const loc = locale.location,
-          uuid = locale.string.uuid(),
-          firstName = locale.person.firstName(),
-          middleName = locale.person.middleName(),
-          lastName = locale.person.lastName(),
-          state = loc.state({ abbreviated: true }),
-          city = loc.city(),
-          street = loc.street(),
-          building = loc.buildingNumber(),
-          apartment = loc.secondaryAddress(),
-          zipCode = loc.zipCode(),
-          phone = locale.phone.number();
-
-    if (errorN > 0) {
-        let noisyData = [
-            firstName, middleName, lastName,
-            state, city, street, building, 
-            apartment, zipCode, phone];    
-
-        for (let i = 0; i < noisyData.length; i++) {
-            for (let j = 0; j < errorN; j++) {
-                noisyData[i] = introduceError(noisyData[i], errorN);
-            }
-        }
-
-        return {
-            id: uuid,
-            name: `${noisyData[0]} ${noisyData[1]} ${noisyData[2]}`,
-            address: `${noisyData[3]}, ${noisyData[4]}, ${noisyData[5]}, ${noisyData[6]}, ${noisyData[7]}, ${noisyData[8]}`,
-            phone: noisyData[9]
-        }
-    }
+    const location = locale.location;
+    const user = {
+        uuid: locale.string.uuid(),
+        firstName: locale.person.firstName(),
+        middleName: locale.person.middleName(),
+        lastName: locale.person.lastName(),
+        state: location.state({ abbreviated: true }),
+        city: location.city(),
+        street: location.street(),
+        building: location.buildingNumber(),
+        apartment: location.secondaryAddress(),
+        zipCode: location.zipCode(),
+        phone: locale.phone.number(),
+    };
 
     return {
-        id: uuid,
-        name: `${firstName} ${middleName} ${lastName}`,
-        address: `${state}, ${city}, ${street}, ${building}, ${apartment}, ${zipCode}`,
-        phone,
-    }
+        id: user.uuid,
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
+        state: user.state,
+        city: user.city,
+        street: user.street,
+        building: user.building,
+        apartment: user.apartment,
+        zipCode: user.zipCode,
+        phone: user.phone,
+    };
 }
 
 export const generateFakeUsers = (locale, seed, length, errorN) => {
-    const users = [];
+    locale.seed(seed)
 
-    locale.seed(seed);
+    const users = Array.from({ length }).map(() => {
+        return generateFakeUser(locale);
+    });
 
-    Array.from({length: length}).forEach(() => {
-        users.push(generateFakeUser(locale, errorN))
-    })
+    if (errorN > 0) {
+        users.forEach((user, index) => {
+            const nameChars = getNameChars(locale);
+            user.firstName = introduceError(user.firstName, errorN, nameChars, locale);
+            user.middleName = introduceError(user.middleName, errorN, nameChars, locale);
+            user.lastName = introduceError(user.lastName, errorN, nameChars, locale);
 
-    return users;
+            const addressChars = getAddressChars(locale);
+            user.state = introduceError(user.state, errorN, addressChars, locale);
+            user.city = introduceError(user.city, errorN, addressChars, locale);
+            user.street = introduceError(user.street, errorN, addressChars, locale);
+            user.building = introduceError(user.building, errorN, addressChars, locale);
+            user.apartment = introduceError(user.apartment, errorN, addressChars, locale);
+            user.zipCode = introduceError(user.zipCode, errorN, addressChars, locale);
+
+            user.phone = introduceError(user.phone, errorN, "-+()0123456789", locale); 
+        });
+    }
+
+    const formattedUsers = [];
+
+    users.forEach((user, index) => {
+        formattedUsers.push({
+            id: user.id,
+            name: `${user.firstName} ${locale === fakerEN_US ? user.middleName + " " : ""}${user.lastName}`,
+            address: `${user.state}, ${user.city}, ${user.street}, ${user.building}, ${user.apartment}, ${user.zipCode}`,
+            phone: user.phone,
+        });
+    });
+
+    return formattedUsers;
 }
 
-const errorN = 25;
-
-console.log("Error: 0");
-console.log(generateFakeUsers(faker, 3, 1, 0));
-console.log(`Error: ${errorN}`);
-console.log(generateFakeUsers(faker, 3, 1, errorN));
+console.log("Users with different seeds");
+console.log(generateFakeUsers(fakerEN_US, 0, 2, 0));
+console.log(generateFakeUsers(fakerEN_US, 1, 2, 0));
+console.log("User with different errorN");
+console.log(generateFakeUsers(fakerEN_US, 0, 2, 0));
+console.log(generateFakeUsers(fakerEN_US, 0, 2, 0.5));

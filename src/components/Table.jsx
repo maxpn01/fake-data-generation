@@ -13,35 +13,38 @@ const getLocale = (region) => {
 const Table = () => {
     const [userData, setUserData] = useState([]);
     const [displayedUsers, setDisplayedUsers] = useState([]);
-    // const [currentPage, setCurrentPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
-    const generatedUsersSize = 100;
-    const initialDisplayedUsersSize = 20;
+    const generatedDataSize = 200;
+    const displayedDataSize = 20;
+
     const fetchSize = 10;
+    const fetchMoreDataDelay = 700;
+
+    const tableHeight = 540;
 
     const region = useSelector(state => state.region.value);
+    const errorAmount = useSelector(state => state.errorAmount.value);
     const seed = useSelector(state => state.seed.value);
 
     useEffect(() => {
         const fetchData = () => {
-            // const combinedSeed = seed + currentPage;
-            const newUserData = generateFakeUsers(getLocale(region), Number(seed), generatedUsersSize);
+            const newUserData = generateFakeUsers(getLocale(region), Number(seed), generatedDataSize, Number(errorAmount));
             setUserData(newUserData);
-            setDisplayedUsers(newUserData.slice(0, initialDisplayedUsersSize));
+            setDisplayedUsers(newUserData.slice(0, displayedDataSize));
         };
 
         fetchData();
-    }, [region, seed, setUserData, setDisplayedUsers])
+    }, [region, seed, errorAmount, setUserData, setDisplayedUsers])
 
     const fetchMoreData = () => {
-        if (displayedUsers.length <= generatedUsersSize) {
-            // setCurrentPage(Math.round(displayedUsers.length / 10));
+
+        if (displayedUsers.length <= generatedDataSize) {
             setTimeout(() => {
                 setDisplayedUsers(prevUsers =>
                     prevUsers.concat(userData.slice(prevUsers.length, prevUsers.length + fetchSize))
                 );
-            }, 700);
+            }, fetchMoreDataDelay);
         } else setHasMore(false);
     }
 
@@ -51,7 +54,7 @@ const Table = () => {
                 dataLength={displayedUsers.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
-                height={540}
+                height={tableHeight}
             >
                 <table className="w-full text-sm">
                     <thead className="text-xs uppercase text-zinc-100 bg-zinc-600">
@@ -66,7 +69,7 @@ const Table = () => {
                     <tbody>
                         {displayedUsers.map((item, i) => {
                             return (
-                                <tr key={i}>
+                                <tr key={item.id}>
                                     <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{i++}</td>
                                     <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{item.id}</td>
                                     <td className="px-3 py-3 whitespace-nowrap text-center border border-collapse border-zinc-600">{item.name}</td>
@@ -78,8 +81,6 @@ const Table = () => {
                     </tbody>
                 </table>
             </InfiniteScroll>
-
-            {/* <h4 className="my-5 text-lg">Page: {currentPage}</h4> */}
         </div>
     )
 }

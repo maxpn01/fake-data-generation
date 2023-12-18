@@ -1,47 +1,87 @@
-import { faker } from "@faker-js/faker";
+import { fakerEN_US, fakerPL, fakerKA_GE } from "@faker-js/faker";
 
-const getRandomNumber = (n) => faker.number.int({ max: n });
+function getRandomInt(locale, n) {
+    return locale === fakerEN_US ? fakerEN_US.number.int({ max: n }) :
+           locale === fakerPL ? fakerPL.number.int({ max: n }) : 
+           locale === fakerKA_GE ? fakerKA_GE.number.int({ max: n }) : "";
+}
 
-const getRandomChar = (s) => {
-    const randomIndex = getRandomNumber(s.length);
+function getRandomFloat(locale, n) {
+    return locale === fakerEN_US ? fakerEN_US.number.float({ max: n }) :
+           locale === fakerPL ? fakerPL.number.float({ max: n }) : 
+           locale === fakerKA_GE ? fakerKA_GE.number.float({ max: n }) : "";
+} 
+
+function getRandomChar(s, locale) {
+    const randomIndex = getRandomInt(locale, s.length);
     return s.slice(randomIndex, randomIndex + 1);
-};
+}
 
-const deleteCharError = (s) => {
+function deleteCharError(s, locale) {
     let newStr = s.split("");
-    newStr.splice(getRandomNumber(s.length), 1);
+    const randomIndex = s.length > 0 ? getRandomInt(locale, s.length-1) :
+                                       getRandomInt(locale, s.length);
+    newStr.splice(randomIndex, 1);
     return newStr.join("");
+}
+
+function addCharError(s, charsSet, locale) {
+    const randomIndex = getRandomInt(locale, s.length);
+    return s.slice(0, randomIndex) + getRandomChar(charsSet, locale) + s.slice(randomIndex);
 };
 
-const addCharError = (s) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const randomIndex = getRandomNumber(s.length);
-    return s.slice(0, randomIndex) + getRandomChar(chars) + s.slice(randomIndex);
-};
-
-const swapCharError = (s) => {
+function swapCharError(s, locale) {
     let newStr = s.split(""),
-        first = getRandomNumber(s.length),
-        second = getRandomNumber(s.length) + 1;
+        first = getRandomInt(locale, s.length),
+        second = getRandomInt(locale, s.length)+1;
 
-    let temp = newStr[first];    
+    let temp = newStr[first];
     newStr[first] = newStr[second];
     newStr[second] = temp;
 
     return newStr.join("");
 };
 
-export default function introduceError(s, errorProbability) {
-    if (Math.random() < errorProbability && s.length < 25) {
-            const errorType = getRandomNumber(5);
+function executeErrorFunc(s, charSet, locale) {
+    const errorType = getRandomInt(locale, 3);
 
-            switch (errorType) {
-                case 0: return deleteCharError(s);
-                case 1: return addCharError(s);
-                case 2: return addCharError(s);
-                case 3: return swapCharError(s);
-                case 4: return swapCharError(s);
-                default: return s;
-            }
-    } else return s;
+    if (s.length >= 20) {
+        switch (errorType) {
+            case 0: return deleteCharError(s, locale);
+            case 1: return deleteCharError(s, locale);
+            case 2: return addCharError(s, charSet, locale);
+            case 3: return swapCharError(s, locale);
+            default: return s;
+        }
+    }
+
+    if (s.length <= 10) {
+        switch (errorType) {
+            case 0: return addCharError(s, charSet, locale);
+            case 1: return addCharError(s, charSet, locale);
+            case 2: return addCharError(s, charSet, locale);
+            case 3: return swapCharError(s, locale);
+            default: return s;
+        }
+    }
+
+    switch (errorType) {
+        case 0: return deleteCharError(s, locale);
+        case 1: return addCharError(s, charSet, locale);
+        case 2: return swapCharError(s, locale);
+        case 3: return swapCharError(s, locale);
+        default: return s;
+    }
+}
+
+export default function introduceError(s, errorN, charSet, locale) {
+    if (errorN < 1) {
+        if (getRandomFloat(locale, 1) < errorN) return executeErrorFunc(s, charSet, locale);
+        else return s;
+    }
+
+    for (let i = 0; i < errorN; i++)
+        s = executeErrorFunc(s, charSet, locale);
+
+    return s;
 };

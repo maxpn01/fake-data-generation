@@ -13,6 +13,7 @@ const Seed = () => {
             <input 
                 type="number" 
                 id="seed"
+                min={0}
                 value={seed}
                 onChange={e => dispatch(setSeed(e.target.value))}
                 className="bg-gray-50 border-none outline-none w-20 p-1 mx-3" 
