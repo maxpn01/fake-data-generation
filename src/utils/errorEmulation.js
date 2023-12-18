@@ -80,8 +80,7 @@ export default function introduceError(s, errorN, charSet, locale) {
         else return s;
     }
 
-    for (let i = 0; i < errorN; i++)
-        s = executeErrorFunc(s, charSet, locale);
+    s = executeErrorFunc(s, charSet, locale);
 
     return s;
 };

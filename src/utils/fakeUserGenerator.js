@@ -18,7 +18,7 @@ function getAddressChars(locale) {
            locale === fakerKA_GE ? georgianAlphabet + digits : "";
 }
 
-const generateFakeUser = (locale, errorN) => {
+const generateFakeUser = (locale) => {
     return {
         uuid: locale.string.uuid(),
         firstName: locale.person.firstName(),
@@ -44,19 +44,20 @@ export const generateFakeUsers = (locale, seed, length, errorN) => {
     if (errorN > 0) {
         users.forEach((user, index) => {
             const nameChars = getNameChars(locale);
-            user.firstName = introduceError(user.firstName, errorN, nameChars, locale);
-            user.middleName = introduceError(user.middleName, errorN, nameChars, locale);
-            user.lastName = introduceError(user.lastName, errorN, nameChars, locale);
-
             const addressChars = getAddressChars(locale);
-            user.state = introduceError(user.state, errorN, addressChars, locale);
-            user.city = introduceError(user.city, errorN, addressChars, locale);
-            user.street = introduceError(user.street, errorN, addressChars, locale);
-            user.building = introduceError(user.building, errorN, addressChars, locale);
-            user.apartment = introduceError(user.apartment, errorN, addressChars, locale);
-            user.zipCode = introduceError(user.zipCode, errorN, addressChars, locale);
 
-            user.phone = introduceError(user.phone, errorN, "-+()0123456789", locale); 
+            for (let i = 0; i < errorN; i++) {
+                const randomKey = Object.keys(user)[locale.number.int({ max: Object.keys(user).length })];
+                if (randomKey !== "uuid") {
+                    if (randomKey === "firstName" || randomKey === "middleName" || randomKey === "lastName")
+                        user[randomKey] = introduceError(user[randomKey], errorN, nameChars, locale);
+                    if (randomKey === "state" || randomKey === "city" || randomKey === "street" || 
+                        randomKey === "building" || randomKey === "apartment" || randomKey === "zipCode")
+                        user[randomKey] = introduceError(user[randomKey], errorN, addressChars, locale);
+                    if (randomKey === "phone")
+                        user[randomKey] = introduceError(user[randomKey], errorN, "-+()0123456789", locale);
+                }
+            }
         });
     }
 
